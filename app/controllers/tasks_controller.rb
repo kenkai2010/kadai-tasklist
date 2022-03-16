@@ -2,7 +2,11 @@ class TasksController < ApplicationController
   before_action :set_task, only: [:show, :edit, :update, :destroy]
   
   def index
-    @pagy, @tasks = pagy(Task.order(id: :desc))
+    if logged_in?
+      @pagy, @tasks = pagy(Task.order(id: :desc))
+    else
+      redirect_to '/login'
+    end
   end
 
   def show
