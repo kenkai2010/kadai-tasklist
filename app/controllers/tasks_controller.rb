@@ -3,11 +3,7 @@ class TasksController < ApplicationController
   before_action :correct_user, only: [:show, :edit, :update, :destroy]
   
   def index
-    if logged_in?
-      @pagy, @tasks = pagy(Task.order(id: :desc))
-    else
-      redirect_to '/login'
-    end
+    @pagy, @tasks = pagy(Task.where(user_id: current_user.id).includes(:user).order("created_at DESC"))
   end
 
   def show
@@ -35,7 +31,7 @@ class TasksController < ApplicationController
   def update
     if @tasklist.update(task_params)
       flash[:success] = 'Task は正常に更新されました'
-      redirect_to @task
+      redirect_to @tasklist
     else
       flash.now[:danger] = 'Task は更新されませんでした'
       render :edit
